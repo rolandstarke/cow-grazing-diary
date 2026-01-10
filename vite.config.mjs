@@ -10,8 +10,12 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
+// Access GitHub Pages base path from env
+const basePath = process.env.VITE_BASE_PATH || '/'
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: basePath,
   plugins: [
     VueRouter(),
     Vue({
