@@ -1,80 +1,97 @@
-<template>
-  <v-container>
-    <!-- Diary Entries -->
-    <div v-for="entry in diaryEntries" :key="entry.id" class="mb-4">
-      <v-card>
-        <v-card-title>{{ entry.date }}</v-card-title>
-        <v-card-text>
-          <v-icon left v-if="entry.icon">{{ entry.icon }}</v-icon>
-          {{ entry.note }}
-        </v-card-text>
-      </v-card>
-    </div>
-
-    <!-- Floating Add Button -->
-    <v-fab
-      icon="mdi-plus"
-      location="bottom right"
-      size="large"
-      color="primary"
-      app
-      @click="showDialog = true"
-    />
-
-    <!-- Add Note Dialog -->
-    <v-dialog v-model="showDialog" max-width="400px">
-      <v-card>
-        <v-card-title>Add Diary Entry</v-card-title>
-        <v-card-text>
-          <v-textarea
-            label="Note"
-            v-model="newNote"
-            rows="3"
-          />
-
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn text @click="showDialog = false">Cancel</v-btn>
-          <v-btn color="primary" @click="addEntry">Add</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
-</template>
-
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { db } from './../db'
 
-const diaryEntries = ref([
-  { id: 1, date: '2026-01-10', note: 'Brought 10 cows to Field 1', icon: 'mdi-cow' },
-  { id: 2, date: '2026-01-09', note: 'Fed all cows in Stall 2', icon: 'mdi-food-apple' },
-])
+// state
+const todayNote = ref('')
+const diary = ref([])
 
-// Dialog state
-const showDialog = ref(false)
-const newNote = ref('')
-const newIcon = ref('')
-
-// Add new entry
-const addEntry = () => {
-  if (!newNote.value) return
-  diaryEntries.value.unshift({
-    id: Date.now(),
-    date: new Date().toISOString().split('T')[0],
-    note: newNote.value,
-    icon: newIcon.value || null,
-  })
-  newNote.value = ''
-  newIcon.value = ''
-  showDialog.value = false
+// load entries on startup
+async function loadDiary() {
+  diary.value = await db.diary
+    .orderBy('date')
+    .reverse()
+    .toArray()
 }
+
+// save new entry
+async function saveToday() {
+  if (!todayNote.value.trim()) return
+
+  const entry = {
+    date: new Date().toISOString().slice(0, 10),
+    note: todayNote.value.trim(),
+    editing: false,
+  }
+
+  const id = await db.diary.add(entry)
+
+  diary.value.unshift({ ...entry, id })
+  todayNote.value = ''
+}
+
+// toggle edit
+function toggleEdit(entry) {
+  entry.editing = !entry.editing
+}
+
+// save edit to DB
+async function saveEdit(entry) {
+  entry.editing = false
+  await db.diary.update(entry.id, { note: entry.note })
+}
+
+// initialize
+onMounted(loadDiary)
 </script>
 
-<style scoped>
-.mb-4 {
-  margin-bottom: 1rem;
-}
-</style>
+<template>
+  <v-container>
+    <!-- Today section -->
+    <v-card class="pa-4 mb-4">
+      <h3 class="mb-2">
+        {{ new Date().toLocaleDateString() }}
+      </h3>
 
+      <v-textarea
+        v-model="todayNote"
+        placeholder="Write what happened today..."
+        auto-grow
+        rows="4"
+      />
 
+      <v-btn class="mt-3" variant="flat" @click="saveToday">
+        Save Entry
+      </v-btn>
+    </v-card>
+
+    <!-- Timeline -->
+    <v-timeline density="compact" side="end">
+      <v-timeline-item
+        v-for="entry in diary"
+        :key="entry.id"
+      >
+        <v-card class="pa-4">
+          <small class="text-medium-emphasis">{{ entry.date }}</small>
+
+          <!-- editing mode -->
+          <div v-if="entry.editing">
+            <v-textarea
+              v-model="entry.note"
+              auto-grow
+              class="mt-2"
+            />
+            <v-btn size="small" class="mt-2 mr-2" @click="saveEdit(entry)">Save</v-btn>
+            <v-btn size="small" variant="text" @click="toggleEdit(entry)">Cancel</v-btn>
+          </div>
+
+          <!-- read mode -->
+          <div v-else>
+            <p class="mt-2">{{ entry.note }}</p>
+            <v-btn size="small" variant="text" @click="toggleEdit(entry)">Edit</v-btn>
+          </div>
+        </v-card>
+      </v-timeline-item>
+    </v-timeline>
+  </v-container>
+</template>

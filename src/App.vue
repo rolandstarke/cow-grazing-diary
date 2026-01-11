@@ -11,6 +11,7 @@
 
       
       <v-list>
+        <v-list-item to="/" title="Dashboard" />
         <v-list-item to="/diary" title="Diary" />
         <v-list-item to="/stock" title="Stock" />
       </v-list>
