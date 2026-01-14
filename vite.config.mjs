@@ -34,7 +34,7 @@ export default defineConfig({
       manifest: {
         name: 'Farm Diary 2',
         short_name: 'farm-diary2',
-        start_url: '/',
+        start_url: basePath,
         display: 'standalone',
         background_color: '#121212', // dark gray background splash
         theme_color: '#121212',      // coral-ish status bar color
