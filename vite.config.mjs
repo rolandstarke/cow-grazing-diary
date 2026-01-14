@@ -10,7 +10,12 @@ import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
 // Access GitHub Pages base path from env
-const basePath = process.env.VITE_BASE_PATH || '/'
+let basePath = process.env.VITE_BASE_PATH || '/';
+
+// Ensure it always ends with exactly one slash
+if (!basePath.endsWith('/')) {
+  basePath += '/';
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
