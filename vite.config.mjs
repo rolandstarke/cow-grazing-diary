@@ -45,10 +45,26 @@ export default defineConfig({
         theme_color: '#121212',      // coral-ish status bar color
         icons: [
           {
-            src: '/assets/logo.png',
-            sizes: '512x512',
-            type: 'image/png',
+            "src": "pwa-64x64.png",
+            "sizes": "64x64",
+            "type": "image/png"
           },
+          {
+            "src": "pwa-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+          },
+          {
+            "src": "pwa-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+          },
+          {
+            "src": "maskable-icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+          }
         ],
       },
     }),
