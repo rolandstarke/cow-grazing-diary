@@ -10,9 +10,14 @@
       >
         <v-card>
           <v-card-title>{{ stall.name }}</v-card-title>
+
           <v-card-text>
-            <div class="cows">
-              <span v-for="n in stall.count" :key="n">🐄</span>
+            <div class="cow-list">
+              <CowAvatar
+                v-for="n in stall.count"
+                :key="n"
+                tag="123456789"
+              />
             </div>
           </v-card-text>
         </v-card>
@@ -22,6 +27,8 @@
 </template>
 
 <script setup>
+import CowAvatar from '@/components/CowAvatar.vue'
+
 const stalls = [
   { name: 'Stall 1', count: 10 },
   { name: 'Stall 2', count: 5 },
@@ -30,8 +37,10 @@ const stalls = [
 </script>
 
 <style scoped>
-.cows {
-  font-size: 24px;
-  line-height: 1.4;
+.cow-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 0;
 }
 </style>

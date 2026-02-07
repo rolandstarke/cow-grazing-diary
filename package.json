@@ -11,9 +11,6 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/logo.svg"
   },
   "dependencies": {
-    "@capacitor/android": "^8.0.1",
-    "@capacitor/cli": "^7.4.5",
-    "@capacitor/core": "^8.0.1",
     "@fontsource/roboto": "5.2.7",
     "@mdi/font": "7.4.47",
     "dexie": "^4.2.1",
