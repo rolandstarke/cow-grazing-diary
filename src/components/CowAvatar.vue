@@ -1,6 +1,6 @@
 <template>
   <div class="cow-avatar">
-    <img :src="image" alt="" />
+    <img :src="'https://img.pikbest.com/origin/10/13/14/69UpIkbEsT68Q.png!bwr800'" alt="" />
 
     <div class="tag-overlay">
       {{ tag.slice(-3) }}
@@ -33,7 +33,7 @@ const props = defineProps({
   position: absolute;
   bottom: 0;
   right: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(255, 238, 0, 0.884);
   color: white;
   padding: 2px 5px;
   font-size: 0.7rem;
